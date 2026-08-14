@@ -1,0 +1,45 @@
+properties([
+    parameters([
+        choice(
+            name: 'Terraform_Action',
+            description: 'Select the Terraform action to perform',
+            choices: ['plan', 'apply', 'destroy']
+        )
+    ])
+])
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                sh 'terraform validate'
+            }
+        }
+
+        stage('Action') {
+            steps {
+                withAWS(credentials: 'aws-credentials', region: 'us-east-1'){
+                    script {
+                        if (params.Terraform_Action == 'plan') {
+                            sh 'terraform plan'
+                        } else if (params.Terraform_Action == 'apply') {
+                            sh 'terraform apply -auto-approve'
+                        } else if (params.Terraform_Action == 'destroy') {
+                            sh 'terraform destroy -auto-approve'
+                        } else {
+                            error "Invalid Terraform action: ${params.Terraform_Action}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
