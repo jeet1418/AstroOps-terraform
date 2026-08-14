@@ -1,4 +1,4 @@
-properties ([
+properties([
     parameters([
         string(
             name: 'Environment',
@@ -14,33 +14,75 @@ properties ([
 ])
 
 pipeline {
+
     agent any
 
     stages {
+
         stage('Terraform Init') {
+
             steps {
-                sh 'terraform init'
+
+                dir('eks-infra') {
+
+                    sh 'terraform init'
+                }
             }
         }
+
 
         stage('Terraform Validate') {
+
             steps {
-                sh 'terraform validate'
+
+                dir('eks-infra') {
+
+                    sh 'terraform validate'
+                }
             }
         }
 
-        stage('Action') {
+
+        stage('Terraform Action') {
+
             steps {
-                withAWS(credentials: 'aws-credentials', region: 'us-east-1'){
-                    script {
-                        if (params.Terraform_Action == 'plan') {
-                            sh 'terraform plan -var-file="environment=${params.Environment}.tfvars"'
-                        } else if (params.Terraform_Action == 'apply') {
-                            sh 'terraform apply -var-file="environment=${params.Environment}.tfvars" -auto-approve'
-                        } else if (params.Terraform_Action == 'destroy') {
-                            sh 'terraform destroy -var-file="environment=${params.Environment}.tfvars" -auto-approve'
-                        } else {
-                            error "Invalid Terraform action: ${params.Terraform_Action}"
+
+                dir('eks-infra') {
+
+                    withAWS(
+                        credentials: 'aws-credentials',
+                        region: 'us-east-1'
+                    ) {
+
+                        script {
+
+                            if (params.Terraform_Action == 'plan') {
+
+                                sh """
+                                    terraform plan \
+                                    -var-file="${params.Environment}.tfvars"
+                                """
+
+                            } else if (params.Terraform_Action == 'apply') {
+
+                                sh """
+                                    terraform apply \
+                                    -var-file="${params.Environment}.tfvars" \
+                                    -auto-approve
+                                """
+
+                            } else if (params.Terraform_Action == 'destroy') {
+
+                                sh """
+                                    terraform destroy \
+                                    -var-file="${params.Environment}.tfvars" \
+                                    -auto-approve
+                                """
+
+                            } else {
+
+                                error "Invalid Terraform action: ${params.Terraform_Action}"
+                            }
                         }
                     }
                 }
@@ -48,4 +90,3 @@ pipeline {
         }
     }
 }
-    

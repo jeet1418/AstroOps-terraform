@@ -9,33 +9,56 @@ properties([
 ])
 
 pipeline {
+
     agent any
 
     stages {
+
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                dir('backend') {
+                    sh 'terraform init'
+                }
             }
         }
 
         stage('Terraform Validate') {
             steps {
-                sh 'terraform validate'
+                dir('backend') {
+                    sh 'terraform validate'
+                }
             }
         }
 
-        stage('Action') {
+        stage('Terraform Action') {
+
             steps {
-                withAWS(credentials: 'aws-credentials', region: 'us-east-1'){
-                    script {
-                        if (params.Terraform_Action == 'plan') {
-                            sh 'terraform plan'
-                        } else if (params.Terraform_Action == 'apply') {
-                            sh 'terraform apply -auto-approve'
-                        } else if (params.Terraform_Action == 'destroy') {
-                            sh 'terraform destroy -auto-approve'
-                        } else {
-                            error "Invalid Terraform action: ${params.Terraform_Action}"
+
+                dir('backend') {
+
+                    withAWS(
+                        credentials: 'aws-credentials',
+                        region: 'us-east-1'
+                    ) {
+
+                        script {
+
+                            if (params.Terraform_Action == 'plan') {
+
+                                sh 'terraform plan'
+
+                            } else if (params.Terraform_Action == 'apply') {
+
+                                sh 'terraform apply -auto-approve'
+
+                            } else if (params.Terraform_Action == 'destroy') {
+
+                                sh 'terraform destroy -auto-approve'
+
+                            } else {
+
+                                error "Invalid Terraform action: ${params.Terraform_Action}"
+                            }
                         }
                     }
                 }
