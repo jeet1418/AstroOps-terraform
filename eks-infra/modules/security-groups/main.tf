@@ -3,16 +3,6 @@ resource "aws_security_group" "jump_server_sg" {
   description = "Security group for Jump Server"
   vpc_id      = var.vpc_id
 
-  # Allow SSH from administrator's public IP
-  ingress {
-    description = "SSH from administrator"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-
-    cidr_blocks = [var.admin_ip]
-  }
-
   # Allow outbound traffic
   egress {
     description = "Allow outbound traffic"

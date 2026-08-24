@@ -65,8 +65,3 @@ variable "enable_private_access" {
   description = "Whether to enable private access for the EKS cluster"
   type        = bool
 }
-
-variable "admin_ip" {
-  description = "The public IP address of the administrator for SSH access"
-  type        = string
-}
