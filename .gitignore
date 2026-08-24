@@ -1,2 +1,9 @@
 ## mac 
 **/.DS_Store
+
+## terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
