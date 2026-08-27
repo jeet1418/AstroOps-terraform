@@ -12,7 +12,6 @@ module "eks" {
     enable_public_access  = var.enable_public_access
     enable_private_access = var.enable_private_access
     vpc_id = module.vpc.vpc_id
-    cluster_security_group_id = module.security_groups.eks_cluster_sg_id
 }
 
 module "vpc" {
@@ -23,10 +22,4 @@ module "vpc" {
     public_subnet_cidrs  = var.public_subnet_cidrs
     private_subnet_cidrs = var.private_subnet_cidrs
     availability_zones   = var.availability_zones
-}
-
-module "security_groups" {
-    source = "./modules/security-groups"
-    cluster_name = var.cluster_name
-    vpc_id       = module.vpc.vpc_id
 }

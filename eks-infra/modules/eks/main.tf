@@ -35,7 +35,6 @@ resource "aws_eks_cluster" "main" {
     endpoint_public_access = var.enable_public_access
     endpoint_private_access = var.enable_private_access
 
-    security_group_ids = [var.cluster_security_group_id]
   }
 
   depends_on = [
