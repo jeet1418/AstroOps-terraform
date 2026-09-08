@@ -40,3 +40,8 @@ variable "vpc_id" {
   description = "The ID of the VPC where the EKS cluster will be deployed"
   type        = string
 }
+
+variable "eks_security_group_ids" {
+  description = "A list of security group IDs to associate with the EKS cluster"
+  type        = list(string)
+}

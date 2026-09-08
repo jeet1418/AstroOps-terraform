@@ -65,3 +65,8 @@ variable "enable_private_access" {
   description = "Whether to enable private access for the EKS cluster"
   type        = bool
 }
+
+variable "jump_server_name" {
+  description = "The name of the Jump Server"
+  type        = string
+}

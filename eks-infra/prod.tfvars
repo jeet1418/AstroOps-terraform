@@ -21,3 +21,5 @@ dynamodb_table = "astro-state-lock"
 
 enable_public_access = false
 enable_private_access = true
+
+jump_server_name = "jump-server-sg"
