@@ -96,3 +96,10 @@ resource "aws_eks_node_group" "main" {
     aws_iam_role_policy_attachment.node_policy
   ]
 }
+
+
+resource "aws_eks_access_entry" "jump_server" {
+  cluster_name  = var.cluster_name
+  principal_arn = "arn:aws:iam::831926618816:role/InstanceRole"
+  type          = "STANDARD"
+}
