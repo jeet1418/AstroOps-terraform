@@ -27,8 +27,8 @@ resource "aws_eks_cluster" "main" {
   version  = var.kubernetes_version
 
   access_config {
-    authentication_mode = "API_AND_CONFIG_MAP"
-    bootstrap_cluster_creator_admin_permissions = true
+    authentication_mode = "API"
+    bootstrap_cluster_creator_admin_permissions = false
   }
 
   vpc_config {
@@ -41,6 +41,35 @@ resource "aws_eks_cluster" "main" {
 
   depends_on = [
     aws_iam_role_policy_attachment.cluster_policy
+  ]
+}
+
+data "aws_iam_role" "jump_server" {
+  name = "JumpServerRole"
+}
+
+resource "aws_eks_access_entry" "jump_server" {
+  cluster_name  = var.cluster_name
+  principal_arn = data.aws_iam_role.jump_server.arn
+  type          = "STANDARD"
+
+  depends_on = [
+    aws_eks_cluster.main
+  ]
+}
+
+resource "aws_eks_access_policy_association" "jump_server" {
+  cluster_name  = var.cluster_name
+  principal_arn = data.aws_iam_role.jump_server.arn
+
+  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+
+  depends_on = [
+    aws_eks_access_entry.jump_server
   ]
 }
 

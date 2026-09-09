@@ -5,13 +5,13 @@ provider "aws" {
 module "eks" {
     source = "./modules/eks"
     
-    cluster_name          = var.cluster_name
-    kubernetes_version    = var.kubernetes_version
-    subnet_ids            = module.vpc.private_subnet_ids
-    node_groups           = var.node_groups
-    enable_public_access  = var.enable_public_access
-    enable_private_access = var.enable_private_access
-    vpc_id = module.vpc.vpc_id
+    cluster_name           = var.cluster_name
+    kubernetes_version     = var.kubernetes_version
+    subnet_ids             = module.vpc.private_subnet_ids
+    node_groups            = var.node_groups
+    enable_public_access   = var.enable_public_access
+    enable_private_access  = var.enable_private_access
+    vpc_id                 = module.vpc.vpc_id
     eks_security_group_ids = [module.security_groups.eks_cluster_sg_id]
 }
 
